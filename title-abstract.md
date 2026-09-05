@@ -22,4 +22,4 @@ useful across different LLM providers and experiments.
 
 You will hopefully have a concrete understanding of when an MCP server is appropriate, how
 to build one around an existing Python project, and why interoperable tool interfaces are
-likely to matter more than model-specific integrations.
+likely to matter more than LLM-specific integrations.

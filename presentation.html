@@ -149,7 +149,7 @@ mcp.run()</code></pre>
 <!-- 3. THE DIAGRAM EVERYONE DRAWS                                          -->
 <!-- ============================================================ -->
 <section id="naive-vs-real">
-  <h2>The simple picture, and what we actually run</h2>
+  <h2>The simple picture, and what I actually run</h2>
   <div class="content" style="justify-content:center; gap:26px;">
     <div>
       <p style="margin:0 0 8px 0;"><span class="tag teal">every MCP tutorial</span></p>
@@ -290,8 +290,8 @@ Events: 2M &middot; k-factor: 1.0
     would pick, convert units visibly so the model can't silently mix nb and pb, deduplicate,
     and end every result with named follow-up tools so the model knows where to go next.
     And the callout: the docstrings keep getting fixed against the tools' real behavior. AMI is
-    the one server where we teach the model a query language, so the documentation is executable;
-    when a documented example was wrong, the model reproduced the wrong syntax verbatim, and we
+    the one server where I teach the model a query language, so the documentation is executable;
+    when a documented example was wrong, the model reproduced the wrong syntax verbatim, and I
     fixed the docs the way you fix code, against the live service.
   </aside>
 </section>
@@ -324,9 +324,9 @@ wildcard pattern to search for it.</code></pre>
       </div>
     </div>
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:22px;">
-      <p style="margin:0; font-size:13.5pt;">Empty results carry the same routing hints. The error categories also feed our monitoring, so we can see which tools confuse the agent.</p>
+      <p style="margin:0; font-size:13.5pt;">Empty results carry the same routing hints. The error categories also feed my monitoring, so I can see which tools confuse the agent.</p>
       <div class="callout teal">
-        <p style="margin:0; font-size:13pt;">MCP results have an <code>isError</code> flag so clients can tell failure from success. We didn't set it at first; do both.</p>
+        <p style="margin:0; font-size:13pt;">MCP results have an <code>isError</code> flag so clients can tell failure from success. I didn't set it at first; do both.</p>
       </div>
     </div>
   </div>
@@ -339,9 +339,9 @@ wildcard pattern to search for it.</code></pre>
     result rather than being raised into the server logs, and the recovery line names the exact
     next tool, so most failures heal themselves inside the loop. Empty results, which are the
     most common silent failure, get the same treatment.
-    Two housekeeping notes: the same error categories feed our monitoring, so we can literally
+    Two housekeeping notes: the same error categories feed my monitoring, so I can literally
     chart which tools confuse the agent; and MCP has a flag on results, isError, that lets
-    clients and gateways distinguish failure from success. We skipped it at first and our audit
+    clients and gateways distinguish failure from success. I skipped it at first and my audit
     log counted failing calls as successes for a while. Return the friendly prose AND set the
     flag.
   </aside>
@@ -385,7 +385,7 @@ Pass `offset=50` to see more.</code></pre>
     limit of fifty, enforced server side, and the two lines at the bottom matter most: the output
     says it truncated and says exactly how to get the next page. Truncation the LLM can't see
     silently distorts what it believes; truncation it can see is just the next tool call.
-    The callout is the second half of the lesson, and we learned it the embarrassing way: for a
+    The callout is the second half of the lesson, and I learned it the embarrassing way: for a
     while the output was perfectly paginated while the server still downloaded the entire
     container upstream to serve each page. An external contributor caught it. Cap what the
     backend does, not just what the LLM reads.
@@ -438,7 +438,7 @@ async def create_jupyter_server(
     actual setuid subprocess for the filesystem so the kernel does the enforcement, and the VOMS
     nickname inside your redeemed grid proxy for Rucio and AMI.
     And one sharpening: even the token doesn't carry authority. Who you are, your groups and your
-    unix identity, is looked up from the identity provider, Keycloak in our case, on every call,
+    unix identity, is looked up from the identity provider, Keycloak in my case, on every call,
     rather than trusted from token contents. That's what makes removing someone from a group take
     effect in seconds instead of whenever their token expires.
   </aside>
@@ -490,7 +490,7 @@ mint_ticket(claims[<span class="cmt">"sub"</span>])
     The architectural heart, and the abstract's promise: authentication without exposing user
     credentials. Three moves across the cards. First, credential lifetime equals tool-call
     lifetime: when rucio-mcp needs your grid proxy, it fetches it, writes a mode-0600 temp file,
-    makes exactly one backend call, and deletes it, success or failure. We test the deletion.
+    makes exactly one backend call, and deletes it, success or failure. I test the deletion.
     Second, exchange instead of forwarding: the user's own token never goes downstream, which the
     MCP spec explicitly forbids. What goes downstream is a fresh JWT the broker mints, valid for
     exactly one service and expiring in ten minutes. Heavy material like proxy files never passes
@@ -502,7 +502,7 @@ mint_ticket(claims[<span class="cmt">"sub"</span>])
     whoever the token says. The permission check already happened once, at the gateway, against
     live Keycloak groups. That rule is written into all three token services' docstrings so
     nobody re-grows a second permission layer.
-    And nothing secret lives in an MCP server: it's all in a vault, OpenBao for us, behind the
+    And nothing secret lives in an MCP server: it's all in a vault, OpenBao in my case, behind the
     broker. Deep-dive below if credential plumbing is your thing.
   </aside>
 </section>
@@ -558,12 +558,12 @@ mint_ticket(claims[<span class="cmt">"sub"</span>])
         <p class="flow-arrow" style="margin:0; font-size:14pt;">&#8595;</p>
         <div class="node fill" style="font-size:12.5pt; padding:8px;">atlas-search-mcp-bridge (~600 lines)<span class="sub">af-credentials writes the ccache (cached in the broker's vault) to a short-lived file per request</span></div>
         <p class="flow-arrow" style="margin:0; font-size:14pt;">&#8595;</p>
-        <div class="node" style="font-size:12.5pt; padding:8px;"><code>curl --negotiate</code><span class="sub">does the SPNEGO/Kerberos exchange; zero lines of our Python</span></div>
+        <div class="node" style="font-size:12.5pt; padding:8px;"><code>curl --negotiate</code><span class="sub">does the SPNEGO/Kerberos exchange; zero lines of my Python</span></div>
         <p class="flow-arrow" style="margin:0; font-size:14pt;">&#8595;</p>
-        <div class="node slate" style="font-size:12.5pt; padding:8px;">CERN's ATLAS OpenSearch MCP<span class="sub">Kerberos-only; not ours to change</span></div>
+        <div class="node slate" style="font-size:12.5pt; padding:8px;">CERN's ATLAS OpenSearch MCP<span class="sub">Kerberos-only; not mine to change</span></div>
       </div>
       <div class="card teal">
-        <h3>Common gotchas <span class="text-muted" style="font-size:12pt;">(each one bit us)</span></h3>
+        <h3>Common gotchas <span class="text-muted" style="font-size:12pt;">(each one bit me)</span></h3>
         <ul>
           <li>Kerberos and CA trust config must be <em>in the container</em> (krb5.conf, your CA bundle)</li>
           <li>network policy and DNS have to allow the pod &rarr; KDC path</li>
@@ -579,12 +579,12 @@ mint_ticket(claims[<span class="cmt">"sub"</span>])
   <div class="footnote"><a href="https://github.com/maniaclab/atlas-search-mcp-bridge">atlas-search-mcp-bridge</a> &middot; <a href="https://en.wikipedia.org/wiki/SPNEGO">SPNEGO</a> = negotiated Kerberos auth at the HTTP layer.</div>
   <aside class="notes">
     By "the environment" I mean everything between your code and the backend: containers, trust
-    stores, network policy, DNS, the facility itself. One backend we genuinely could not change:
+    stores, network policy, DNS, the facility itself. One backend I genuinely could not change:
     CERN's OpenSearch MCP only accepts SPNEGO, negotiated Kerberos at the Apache layer, while
-    everything on our side speaks OIDC bearer tokens. The answer is the diagram: a six-hundred
+    everything on my side speaks OIDC bearer tokens. The answer is the diagram: a six-hundred
     line bridge that verifies the broker's token, uses the af-credentials library to drop a
     throwaway Kerberos ccache for that one request, and then lets curl's GSSAPI do the actual
-    SPNEGO exchange. Zero lines of Kerberos in our Python, no policy, no standing secret, and it
+    SPNEGO exchange. Zero lines of Kerberos in my Python, no policy, no standing secret, and it
     never parses the MCP traffic passing through it.
     The right box is the honest part: this service had full test coverage, and production still
     failed repeatedly, on Kerberos config and CA bundles inside the container, on a network
@@ -624,7 +624,7 @@ mint_ticket(claims[<span class="cmt">"sub"</span>])
     Everything so far was about one server at a time. At ten, a different class of problem
     appears, and none of it is in the MCP spec. Quick tour: name collisions, because two backends
     will eventually serve a tool with the same name and the failure is silent, so every service
-    gets a prefix. OAuth audiences: each service's audience is pinned in config; we learned the
+    gets a prefix. OAuth audiences: each service's audience is pinned in config; I learned the
     hard way not to derive it from a display name, because a rename broke authentication for
     everything at once. Listing: some MCPs need auth just to enumerate their tools, so the
     gateway mints a credential for the listing itself. New tools are opt-in: when a backend
@@ -657,7 +657,7 @@ mint_ticket(claims[<span class="cmt">"sub"</span>])
     lessons: wrap the client not the CLI, curate what the model reads, and treat docstrings as
     code that gets tested against the live service.
     The bottom three are infrastructure lessons, and two of them, statelessness and client-id
-    metadata documents, we adopted under production pressure months before the MCP spec
+    metadata documents, I adopted under production pressure months before the MCP spec
     standardized the same choices. Dynamic Client Registration deserves its line: besides the
     orphaning, it quietly makes you the owner of a database of client ids, which can grow
     without bound. Early production pain turned out to be a decent predictor of where the
@@ -778,7 +778,7 @@ mint_ticket(claims[<span class="cmt">"sub"</span>])
       <div class="card">
         <h3><i class="fa-solid fa-robot card-icon" style="font-size:15pt;"></i> Across LLM providers</h3>
         <ul>
-          <li>Design for the <strong>least-capable LLM client</strong>: e.g. Claude Desktop had no OAuth discovery, so we added personal access tokens; gemini-cli choked on an OAuth metadata fallback, so we deleted it</li>
+          <li>Design for the <strong>least-capable LLM client</strong>: e.g. Claude Desktop had no OAuth discovery, so I added personal access tokens; gemini-cli choked on an OAuth metadata fallback, so I deleted it</li>
           <li>Standard OAuth, standard transports, no provider-specific hooks</li>
         </ul>
       </div>
@@ -794,13 +794,13 @@ mint_ticket(claims[<span class="cmt">"sub"</span>])
       <p style="margin:0;">Interoperable tool interfaces are likely to matter more than LLM-specific integrations.</p>
     </div>
   </div>
-  <div class="footnote">&darr; how our choices scored against the evolving MCP spec</div>
+  <div class="footnote">&darr; how my choices scored against the evolving MCP spec</div>
   <aside class="notes">
     The abstract's closing claim, made concrete. Across providers: the discipline is designing
-    for the least-capable client. We had a genuinely cleaner design for routing based on OAuth
-    scopes, fully written up, and we shelved it because only one client on the market supports
+    for the least-capable client. I had a genuinely cleaner design for routing based on OAuth
+    scopes, fully written up, and I shelved it because only one client on the market supports
     the feature; the write-up is committed next to the code. Same story with the OAuth metadata
-    fallback we deleted after a different client choked on it. Standard auth, standard
+    fallback I deleted after a different client choked on it. Standard auth, standard
     transports, nothing provider-specific: that's what "works across providers" costs.
     Across experiments: rucio-mcp is already multi-VO because Rucio is, and the whole facility
     shape, broker, custodians, config-only services, transplants to any lab. What doesn't
@@ -816,7 +816,7 @@ mint_ticket(claims[<span class="cmt">"sub"</span>])
   <h2>Scored against the MCP spec <span class="accent">&middot; backup</span></h2>
   <div class="content" style="justify-content:center;">
     <table>
-      <tr><th>Our choice</th><th>The spec (2026-07-28)</th><th>Verdict</th></tr>
+      <tr><th>My choice</th><th>The spec (2026-07-28)</th><th>Verdict</th></tr>
       <tr><td>Stateless HTTP, state as explicit handles</td><td>protocol sessions removed</td><td>compliant / anticipated it</td></tr>
       <tr><td>CIMD instead of Dynamic Client Registration</td><td>DCR deprecated for CIMD</td><td>compliant / anticipated it</td></tr>
       <tr><td>Tools only; no sampling, roots, logging</td><td>all three deprecated</td><td>compliant / anticipated it</td></tr>
@@ -827,12 +827,12 @@ mint_ticket(claims[<span class="cmt">"sub"</span>])
   </div>
   <div class="footnote">Spec: <a href="https://modelcontextprotocol.io/specification/2026-07-28">modelcontextprotocol.io/specification/2026-07-28</a> &middot; full comparison in <a href="https://github.com/kratsg/2026-09-08-pyhepdev-mcp/blob/main/mcp-design-talk.md">mcp-design-talk.md</a> &sect;6.3.</div>
   <aside class="notes">
-    Backup scorecard, useful for the "is MCP stable enough to build on" question. Three of our
+    Backup scorecard, useful for the "is MCP stable enough to build on" question. Three of my
     production-driven choices were later standardized: statelessness, client-id metadata
     documents, and betting on tools as the durable primitive. The auth model is compliant with
-    the spec's strictest MUSTs, including the token-passthrough prohibition, which our broker
+    the spec's strictest MUSTs, including the token-passthrough prohibition, which my broker
     architecture essentially exists to satisfy.
-    And two honest misses: we returned markdown only, no output schemas and no tool annotations,
+    And two honest misses: I returned markdown only, no output schemas and no tool annotations,
     and the platform paid for both, a metering double-count bug and a hand-maintained read/write
     list. The correction is authoring conventions and a retrofit. If you start tomorrow, start
     with structured outputs.
@@ -895,7 +895,7 @@ mint_ticket(claims[<span class="cmt">"sub"</span>])
         <li><strong>Docstrings are the LLM's manual</strong>: write them for the LLM and test the examples against the live service</li>
         <li><strong>Bound every output</strong> with a hard server-side limit, and say in the output when you truncated</li>
         <li><strong>Errors name the next tool</strong> to call, and set MCP's <code>isError</code> flag on the result</li>
-        <li><strong>Structured outputs</strong> (<code>outputSchema</code>) from day one, not retrofitted like ours</li>
+        <li><strong>Structured outputs</strong> (<code>outputSchema</code>) from day one, not retrofitted like mine</li>
       </ul>
       <ul style="margin:0;">
         <li><strong>No username parameters</strong>: identity comes from the verified token, never from the LLM</li>
