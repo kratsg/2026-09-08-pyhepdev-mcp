@@ -35,5 +35,8 @@ presentation_throughput.html
 # deliverable is mcp-design-talk.md)
 research/
 
+# Generated animation exports (scripts/export-gateway-pulse.js)
+exports/
+
 # OS / editor
 .DS_Store
