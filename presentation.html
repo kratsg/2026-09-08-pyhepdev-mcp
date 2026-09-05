@@ -64,7 +64,7 @@
 <section id="what-is-mcp">
   <h2>What is the Model Context Protocol?</h2>
   <div class="content" style="justify-content:center; gap:26px;">
-    <p class="text-lg" style="margin:0;">An open protocol connecting AI assistants ("the model": an LLM like Claude or Gemini) to the libraries, databases, and services scientists already use.</p>
+    <p class="text-lg" style="margin:0;">An open protocol connecting AI assistants (LLMs like Claude or Gemini) to the libraries, databases, and services scientists already use.</p>
     <div style="display:flex; align-items:center; gap:0;">
       <div class="node teal" style="flex:1.1;">AI assistant<span class="sub">Claude, Gemini CLI, VS&nbsp;Code, &hellip;</span></div>
       <div style="flex:0.8; text-align:center;">
@@ -556,19 +556,18 @@ mint_ticket(claims[<span class="cmt">"sub"</span>])
       <div style="display:flex; flex-direction:column; gap:5px;">
         <div class="node teal" style="font-size:12.5pt; padding:8px;">AF gateway<span class="sub">speaks OIDC / OAuth 2.0 bearer tokens</span></div>
         <p class="flow-arrow" style="margin:0; font-size:14pt;">&#8595;</p>
-        <div class="node fill" style="font-size:12.5pt; padding:8px;">atlas-search-mcp-bridge (~600 lines)<span class="sub">af-credentials drops a throwaway Kerberos ccache per request</span></div>
+        <div class="node fill" style="font-size:12.5pt; padding:8px;">atlas-search-mcp-bridge (~600 lines)<span class="sub">af-credentials writes the ccache (cached in the broker's vault) to a short-lived file per request</span></div>
         <p class="flow-arrow" style="margin:0; font-size:14pt;">&#8595;</p>
         <div class="node" style="font-size:12.5pt; padding:8px;"><code>curl --negotiate</code><span class="sub">does the SPNEGO/Kerberos exchange; zero lines of our Python</span></div>
         <p class="flow-arrow" style="margin:0; font-size:14pt;">&#8595;</p>
         <div class="node slate" style="font-size:12.5pt; padding:8px;">CERN's ATLAS OpenSearch MCP<span class="sub">Kerberos-only; not ours to change</span></div>
       </div>
       <div class="card teal">
-        <h3>What actually broke</h3>
-        <p style="font-size:13.5pt;">Never the code. With tests green, production failed on:</p>
+        <h3>Common gotchas <span class="text-muted" style="font-size:12pt;">(each one bit us)</span></h3>
         <ul>
-          <li>Kerberos and CA trust config inside the container</li>
-          <li>network policy and DNS between the pod and the KDC</li>
-          <li>a proxy header quietly dropped in transit</li>
+          <li>Kerberos and CA trust config must be <em>in the container</em> (krb5.conf, your CA bundle)</li>
+          <li>network policy and DNS have to allow the pod &rarr; KDC path</li>
+          <li>proxies in between can quietly drop headers</li>
         </ul>
       </div>
     </div>
@@ -602,6 +601,7 @@ mint_ticket(claims[<span class="cmt">"sub"</span>])
 <section id="platform-scale">
   <h2>What breaks at ten MCPs <span class="accent">(that one never sees)</span></h2>
   <div class="content" style="gap:14px; justify-content:center;">
+    <p class="kicker" style="margin:0;">Design decisions baked into the AF MCP Platform</p>
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px 28px;">
       <ul style="margin:0;">
         <li><strong>Name collisions</strong>: two MCPs serve a tool with the same name; fix = a prefix per service (<code>rucio-atlas_*</code>, <code>fs_*</code>)</li>
@@ -711,8 +711,8 @@ mint_ticket(claims[<span class="cmt">"sub"</span>])
           <p style="font-size:11pt;">The assistant never holds a raw credential; the user's token is never forwarded.</p></div>
         <div class="card teal"><h3 style="font-size:13pt;"><i class="fa-solid fa-list-check"></i> Authorize every call</h3>
           <p style="font-size:11pt;">Group-based access; denials audited too.</p></div>
-        <div class="card teal"><h3 style="font-size:13pt;"><i class="fa-solid fa-clock"></i> Short-lived, per call</h3>
-          <p style="font-size:11pt;">Credential minted for one service, used once, deleted.</p></div>
+        <div class="card teal"><h3 style="font-size:13pt;"><i class="fa-solid fa-clock"></i> Short-lived, scoped</h3>
+          <p style="font-size:11pt;">Minted per service, cached at the broker, reused until expiry; the per-call copy is deleted after use.</p></div>
       </div>
     </div>
   </div>
@@ -791,7 +791,7 @@ mint_ticket(claims[<span class="cmt">"sub"</span>])
       </div>
     </div>
     <div class="callout">
-      <p style="margin:0;">Interoperable tool interfaces are likely to matter more than model-specific integrations.</p>
+      <p style="margin:0;">Interoperable tool interfaces are likely to matter more than LLM-specific integrations.</p>
     </div>
   </div>
   <div class="footnote">&darr; how our choices scored against the evolving MCP spec</div>
@@ -866,7 +866,7 @@ mint_ticket(claims[<span class="cmt">"sub"</span>])
         </ul>
       </div>
     </div>
-    <blockquote style="font-size:22pt; margin-top:6px;">Interoperable tool interfaces are likely to matter more than model-specific integrations.</blockquote>
+    <blockquote style="font-size:22pt; margin-top:6px;">Interoperable tool interfaces are likely to matter more than LLM-specific integrations.</blockquote>
     <p class="text-muted" style="font-size:13pt; margin:0;">Design the interface for the LLM; design the architecture for the credential. &darr; the checklist</p>
   </div>
   <div class="footnote">Giordon Stark &middot; kratsg &middot; PyHEP.dev 2026 &middot; 2026&#8209;09&#8209;07 &middot; slides AI-assisted by Claude (Anthropic).</div>
