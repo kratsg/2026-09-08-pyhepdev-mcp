@@ -78,7 +78,7 @@
       </div>
       <div class="node slate" style="flex:1.2;">Existing library or service<span class="sub">rucio.client, pyAMI, HTCondor, &hellip;</span></div>
     </div>
-    <p class="text-center" style="margin:0;"><span class="tag">tools</span> functions the model calls &nbsp;&nbsp;&nbsp;&nbsp;<span class="tag teal">resources</span> data it reads &nbsp;&nbsp;&nbsp;&nbsp;<span class="tag slate">prompts</span> reusable templates</p>
+    <p class="text-center" style="margin:0;"><span class="tag">tools</span> functions the LLM calls &nbsp;&nbsp;&nbsp;&nbsp;<span class="tag teal">resources</span> data it reads &nbsp;&nbsp;&nbsp;&nbsp;<span class="tag slate">prompts</span> reusable templates</p>
   </div>
   <div class="footnote"><a href="https://modelcontextprotocol.io">modelcontextprotocol.io</a> &middot; not prompt engineering, not a custom foundation model. &darr; a minimal server</div>
   <aside class="notes">
@@ -181,7 +181,7 @@ mcp.run()</code></pre>
     </div>
     <div class="callout">
       <p class="label">The point</p>
-      <p style="margin:0;">The limiting factor is rarely the model. It's reliable, secure access to what scientists already use.</p>
+      <p style="margin:0;">The limiting factor is rarely the LLM. It's reliable, secure access to what scientists already use.</p>
     </div>
   </div>
   <aside class="notes">
@@ -277,7 +277,7 @@ Events: 2M &middot; k-factor: 1.0
       </div>
     </div>
     <div class="callout">
-      <p style="margin:0;">The docstrings keep getting fixed against each tool's actual behavior, to teach the LLM how to use it correctly. The model reproduces examples verbatim, so a doc bug is a behavior bug.</p>
+      <p style="margin:0;">The docstrings keep getting fixed against each tool's actual behavior, to teach the LLM how to use it correctly. The LLM reproduces examples verbatim, so a doc bug is a behavior bug.</p>
     </div>
   </div>
   <div class="footnote">Sketch abridged from real <a href="https://github.com/kratsg/ami-mcp">ami-mcp</a> output; the curation commit is <a href="https://github.com/kratsg/ami-mcp/commit/901f339"><code>901f339</code></a> "optimize MCP tools for LLM usefulness".</div>
@@ -620,8 +620,8 @@ async def create_jupyter_server(
     <table>
       <tr><th>Tried</th><th>Discovered</th><th>Ended with</th></tr>
       <tr><td>Rust CLI wrapper</td><td>parsing text tables is fragile</td><td>Python + native client</td></tr>
-      <tr><td>Returning raw API rows</td><td>noise swamped the model</td><td>curated fields, converted units, next steps</td></tr>
-      <tr><td>Docstrings written from memory</td><td>the model reproduced broken examples verbatim</td><td>docstrings tested against the live service</td></tr>
+      <tr><td>Returning raw API rows</td><td>noise swamped the LLM</td><td>curated fields, converted units, next steps</td></tr>
+      <tr><td>Docstrings written from memory</td><td>the LLM reproduced broken examples verbatim</td><td>docstrings tested against the live service</td></tr>
       <tr><td>Stateful MCP sessions, 2 replicas</td><td>cross-replica "Session terminated"</td><td>stateless HTTP (now the spec default)</td></tr>
       <tr><td>Dynamic Client Registration</td><td>you maintain a database of client ids, and a restart orphans them all</td><td>CIMD (later adopted by the spec)</td></tr>
       <tr><td>Groups inside JWT claims</td><td>revocation waits for token expiry</td><td>live IdP lookup, a real kill switch</td></tr>
@@ -839,12 +839,12 @@ async def create_jupyter_server(
         <ul>
           <li>a one-off script would do</li>
           <li>the backend's API is still churning under you</li>
-          <li>the "tool" would hand the model a credential</li>
+          <li>the "tool" would hand the LLM a credential</li>
         </ul>
       </div>
     </div>
     <blockquote style="font-size:22pt; margin-top:6px;">Interoperable tool interfaces are likely to matter more than model-specific integrations.</blockquote>
-    <p class="text-muted" style="font-size:13pt; margin:0;">Design the interface for the model; design the architecture for the credential. &darr; the checklist</p>
+    <p class="text-muted" style="font-size:13pt; margin:0;">Design the interface for the LLM; design the architecture for the credential. &darr; the checklist</p>
   </div>
   <div class="footnote">Giordon Stark &middot; kratsg &middot; PyHEP.dev 2026 &middot; 2026&#8209;09&#8209;07 &middot; slides AI-assisted by Claude (Anthropic).</div>
   <aside class="notes">
@@ -869,13 +869,13 @@ async def create_jupyter_server(
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px 28px;">
       <ul style="margin:0;">
         <li><strong>One domain per server</strong>, with written non-goals: datasets, or metadata, or notebooks; not all three</li>
-        <li><strong>Docstrings are the LLM's manual</strong>: write them for the model and test the examples against the live service</li>
+        <li><strong>Docstrings are the LLM's manual</strong>: write them for the LLM and test the examples against the live service</li>
         <li><strong>Bound every output</strong> with a hard server-side limit, and say in the output when you truncated</li>
         <li><strong>Errors name the next tool</strong> to call, and set MCP's <code>isError</code> flag on the result</li>
         <li><strong>Structured outputs</strong> (<code>outputSchema</code>) from day one, not retrofitted like ours</li>
       </ul>
       <ul style="margin:0;">
-        <li><strong>No username parameters</strong>: identity comes from the verified token, never from the model</li>
+        <li><strong>No username parameters</strong>: identity comes from the verified token, never from the LLM</li>
         <li><strong>No stored credentials in the server</strong>: fetch per call from a vault, use once, delete</li>
         <li><strong>Permissions decided at one gateway</strong>, not re-implemented per server</li>
         <li><strong>Stateless server</strong>: any state lives in the backend, addressed by an id the tools pass around</li>
