@@ -1,18 +1,22 @@
-# The Facility Is the Context
+# Model Context Protocol for Scientific Software
 
-Slides for the **Nikhef interview colloquium** (Amsterdam, 1 July 2026) by Giordon Stark
-(UC Santa Cruz / SCIPP): *"The Facility Is the Context — agentic computing infrastructure
-for analysis at scale."*
+Slides for **PyHEP.dev 2026** (8 September 2026) by Giordon Stark (UC Santa Cruz / SCIPP):
+*"Model Context Protocol for Scientific Software: Building AI Interfaces That Actually
+Work."* Title and abstract: [`title-abstract.md`](title-abstract.md).
 
-**▶ View the deck:** https://kratsg.github.io/2026-07-01-nikhef-colloquium/
+**▶ View the deck:** https://kratsg.github.io/2026-09-08-pyhepdev-mcp/
 
-The talk argues one thing: as LLM agents arrive in scientific computing, the decisive layer
-is not the model but the **facility's own context, identity, and trust boundaries** — and that
-layer ports across experiments and sciences. Drawing on a working deployment at the UChicago
-ATLAS Analysis Facility (now also serving CMS, DUNE, and ESCAPE data access), it lays out what
-runs today, the architecture that makes it portable, and an agenda of open problems:
-credential-brokered MCP gateways, OIDC/SSH-certificate adoption, sandboxing on and off
-Kubernetes, pixi-native batch environments, and equitable access to inference.
+A 15-minute introduction to MCP for scientific software developers, argued from a working
+deployment: six MCP-layer projects, four credential services, and one gateway/broker
+platform, all in production on the UChicago ATLAS Analysis Facility. The limiting factor is
+rarely the model; the hard part is giving it reliable, secure access to the tools, data,
+and domain knowledge scientists already use. The talk covers practical patterns for
+building MCP servers around existing Python libraries, handling authentication without
+exposing user credentials, and designing interfaces that stay useful across LLM providers
+and experiments.
+
+The research behind every slide, with commit-level citations, is in
+[`mcp-design-talk.md`](mcp-design-talk.md).
 
 ## What's here
 
@@ -20,16 +24,20 @@ Kubernetes, pixi-native batch environments, and equitable access to inference.
 |------|------------|
 | `presentation.html` | The deck (reveal.js 6.0.1, loaded from CDN — no build step) |
 | `styles.css` | UChicago-maroon theme (CSS variables, `pt` font sizing) |
-| `images/` | Committed figures, the demo video, and the hand-authored `NEW-*.svg` diagrams |
-| `.agents/skills/` | The `revealjs` build skill + `grill-me`, used to author the deck |
+| `title-abstract.md` | The submitted talk title and abstract |
+| `mcp-design-talk.md` | The full research dossier the slides are built from |
+| `images/` | Committed figures (the title hero is reused AI-generated art) |
+| `.agents/skills/` | The `revealjs` build skill used to author the deck |
 | `.github/workflows/deploy.yml` | Auto-publishes to GitHub Pages on push to `main` |
 
 ## Structure
 
-Vision-first and **layered**: a broad main line any physicist can follow, with optional
-technical **deep-dive / backup** slides (reachable by down-arrow in the vertical stacks).
-Five sections: the thesis → an existence proof → the architecture that makes it portable →
-the agenda of open problems → Nikhef, ESCAPE, and the discussion.
+A main line of ~14 slides (about a minute each), with **backup / deep-dive** slides in
+vertical stacks (down-arrow): what MCP is (+ a minimal server), the production stack, five
+design principles, what breaks at platform scale (+ the negative-lesson catalogue), the
+end-to-end tool-call trace, interoperability (+ a scorecard against the MCP spec), and a
+closing "when is an MCP appropriate" (+ the checklist). Slides aim for 40–50 words of
+visible text; the depth lives in speaker notes and the backups.
 
 ## View it
 
@@ -43,8 +51,8 @@ the agenda of open problems → Nikhef, ESCAPE, and the discussion.
 
 ## Edit it
 
-Edit `presentation.html` directly (one slide / a few slides at a time), or use the in-browser
-editor from the reveal.js skill:
+Edit `presentation.html` directly (one slide / a few slides at a time), or use the
+in-browser editor from the reveal.js skill:
 
 ```bash
 node .agents/skills/revealjs/scripts/edit-html.js presentation.html
@@ -69,13 +77,12 @@ node .agents/skills/revealjs/scripts/check-overflow.js presentation.html
 ## Deploy
 
 Pushing to `main` triggers `.github/workflows/deploy.yml`, which publishes
-`presentation.html` (as `index.html`) + `styles.css` + `images/` to GitHub Pages, injects the
-build stamp, and attaches a best-effort `slides.pdf`. One-time setup: repo **Settings → Pages →
-Source: GitHub Actions**.
+`presentation.html` (as `index.html`) + `styles.css` + `images/` to GitHub Pages, injects
+the build stamp, and attaches a best-effort `slides.pdf`. One-time setup: repo **Settings →
+Pages → Source: GitHub Actions**.
 
 ## Credits
 
-Slides AI-assisted by Claude (Anthropic). The title illustration is AI-generated; the
-architecture (`NEW-af-mcp-arch.svg`) and pixi-pack (`NEW-pixi-pack.svg`) diagrams are
-hand-authored. OpenWebUI / Slack screenshots and the Jupyter MCP video are real captures.
-Built in the spirit of Gordon Watts' CHEP 2026 ecosystem framing.
+Slides AI-assisted by Claude (Anthropic). The title illustration is AI-generated (reused
+from the Nikhef colloquium deck this repo was scaffolded from). All quoted code and commit
+references are from the real repositories under github.com/maniaclab and github.com/kratsg.

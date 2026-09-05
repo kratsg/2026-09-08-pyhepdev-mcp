@@ -1,21 +1,22 @@
 # CLAUDE.md — working on this repo
 
-This repo is a **reveal.js talk**: "The Facility Is the Context — agentic computing
-infrastructure for analysis at scale" (Nikhef interview colloquium, Amsterdam, 2026-07-01,
-Giordon Stark, UC Santa Cruz / SCIPP). It is **public** and auto-deploys to GitHub Pages.
-Read `README.md` for the audience-facing overview; this file is for whoever edits it next.
+This repo is a **reveal.js talk**: "Model Context Protocol for Scientific Software:
+Building AI Interfaces That Actually Work" (PyHEP.dev 2026, 2026-09-08, Giordon Stark,
+UC Santa Cruz / SCIPP). 15 minutes. It is **public** and auto-deploys to GitHub Pages.
+Read `README.md` for the audience-facing overview and `title-abstract.md` for the
+submitted title/abstract; this file is for whoever edits it next.
 
-It was rebuilt from `kratsg/throughput-computing-2026-slides` (reusing that deck's `styles.css`,
-`images/`, and Pages workflow), then restructured to be **vision-first** and **less
-ATLAS-centric** (ATLAS = current employer; CMS/DUNE/Belle II = informal collaboration on these
-agentic ideas).
+It was scaffolded from `kratsg/2026-07-01-nikhef-colloquium` (reusing that deck's
+`styles.css`, `images/`, skills, and Pages workflow), then fully rebuilt around new
+research: a staged multi-agent analysis of the whole AF MCP ecosystem, written up in
+**`mcp-design-talk.md`** (committed — the citation-grade source for every claim on a
+slide). The per-repo research reports live in `research/` (**local only, gitignored**).
 
 ## How to work on it
 
-- Authored with the **project-local skills** in `.agents/skills/`:
-  - `revealjs/` — build mechanics (scaffold, overflow check, screenshots, in-browser editor)
-    and design conventions. Read `.agents/skills/revealjs/SKILL.md` before structural changes.
-  - `grill-me/` — the interview-the-user skill used to scope the talk.
+- Authored with the **project-local skill** in `.agents/skills/revealjs/` — build
+  mechanics (scaffold, overflow check, screenshots, in-browser editor) and design
+  conventions. Read `.agents/skills/revealjs/SKILL.md` before structural changes.
 - It's already scaffolded. **Don't re-scaffold.** Edit `presentation.html` incrementally
   (one or a few slides at a time) — never rewrite the whole file at once.
 
@@ -25,71 +26,64 @@ agentic ideas).
 2. `node .agents/skills/revealjs/scripts/check-overflow.js presentation.html` — must report
    **no overflow** (slides are fixed 1280×720; content must fit).
 3. Screenshot with decktape and **look at every changed slide** (see README for the command).
-4. **Known gotcha:** slides with video or large images render *scaled-down in decktape's
-   export* — a capture artifact, not a real problem. Confirm via `check-overflow.js`; the
-   browser render is fine.
+4. Watch for code blocks wrapping mid-line in the screenshots — the overflow checker does
+   not flag ragged `<pre>` wraps; shorten the code lines instead of shrinking fonts.
 
-## Conventions (match these)
+## Content rules (match these)
 
-- **Theme:** UChicago Maroon (`#800000`) on warm off-white, teal (`#1F6F78`) / slate accents.
-  All in `styles.css` CSS variables. **Font sizes in `pt`**, never px/em/rem (fixed-size slides).
-- **reveal 6.0.1** from CDN. Plugins: **Notes only** (`dist/plugin/notes.js`). `slideNumber: 'c/t'`,
-  fixed `width: 1280, height: 720`. No Chart.js — charts/bars are plain HTML+CSS (the cost
-  comparison on `agenda-equity-cost` is div bars, not a chart library).
-- **Build stamp:** a fixed bottom-left element `id="buildstamp"` reads `dev` locally; `deploy.yml`
-  rewrites it to `<short-sha> · <date>` at publish time. Keep the `id` and the `dev` default so
-  the sed anchor in the workflow keeps working.
-- **Vision-first, layered depth.** A broad main line + optional `<!-- DEEP-DIVE -->` / `<!-- BACKUP -->`
-  slides. Those markers live **in HTML comments** — never put a literal `<!-- ... -->` inside
-  another comment (it closes the outer one and leaks text onto every slide).
-- **Vertical stacks (down-arrow within a section, right-arrow between):** vocab(+watts),
-  the architecture run, and most agenda items group a main slide with its deep-dive/backup —
-  `gateway(+topology)`, `identity(+deepdive)`, `ssh(+deepdive)`, `sandbox(+policy, +trust-ladder)`,
-  `pixi(+cluster-as-code)`, `equity(+cost)`, `openweb(+skills-commons)`, `iris-osg(+map)`.
-  Keep that structure if adding slides.
-- **Em-dash policy (humanized):** prose uses commas/colons/periods. Keep em-dashes only for
-  real quotations, the "— Giordon" attribution, and "Name — role" lists. Don't reintroduce
-  prose em-dashes.
-- **Honesty tone:** the deck is deliberate about "deployed vs aspirational" — production for
-  ATLAS, "informal / in conversation" for CMS/DUNE/Belle II, "partner" for ESCAPE. Don't
-  inflate these. Citations must be verified before going on-slide.
-- **Boxes:** cards for parallel items, `.callout` for "the point" / open questions. Box-rich
-  but not over-boxed.
-- **Speaker notes:** every slide has an `<aside class="notes">`. Keep them conversational
-  (first person, spoken cadence), straight apostrophes/commas, not em-dashes.
+- **15 minutes, ~14 main slides, about a minute each.** Aim for **40–50 words of visible
+  text per slide** — no blobs of prose. Depth goes into speaker notes and the vertical
+  backup slides, not onto the main line.
+- **Voice:** Giordon's — plain, direct, first person, honest about failures. The framing
+  language comes from `title-abstract.md` ("the limiting factor is rarely the model",
+  "tools, data, and domain knowledge scientists already use", "interoperable tool
+  interfaces are likely to matter more than model-specific integrations"). Don't
+  reintroduce hype.
+- **Evidence-backed only.** Every technical claim on a slide traces to
+  `mcp-design-talk.md` (which carries file:line and commit citations). Don't invent
+  numbers or soften the negative lessons — the "tried X, discovered Y, ended with Z"
+  stories are the talk's strength. Code on slides is quoted from the real repos,
+  abridged only (label "abridged"/"sketch" when reformatted).
+- **Vertical stacks (down-arrow within a stack, right-arrow between):**
+  `what-is-mcp(+build)`, `p-credentials(+custodians)`, `platform-scale(+lessons)`,
+  `interop(+spec)`, `close(+checklist)`. Backups are marked in HTML banner comments
+  (never put a literal `<!-- ... -->` inside another comment — it closes the outer one
+  and leaks text onto every slide). Keep that structure if adding slides.
+- **Em-dash policy (humanized):** prose uses commas/colons/periods. Em-dashes only in
+  real quotations and "Name — role" lists.
+- **Speaker notes:** every slide has an `<aside class="notes">`, conversational, first
+  person, spoken cadence, straight apostrophes.
 
-## Images & diagrams
+## Theme & mechanics
 
-- Live in `images/` and are committed (incl. the web-friendly `jupyter-mcp-demo.mp4`).
-- Two hand-authored SVG diagrams: `NEW-af-mcp-arch.svg` (gateway/broker) and `NEW-pixi-pack.svg`
-  (login → pack → worker). **SVG gotcha:** a standalone `.svg` loaded via `<img>` is parsed as
-  strict XML — use literal UTF-8 glyphs (·, —, →) or numeric entities, **never** HTML named
-  entities like `&middot;`/`&mdash;` (they're undefined in XML and break the render).
-- AI-generated images must be credited on-slide; the title uses the reused `title-hero.png`.
+- **Theme:** UChicago Maroon (`#800000`) on warm off-white, teal (`#1F6F78`) / slate
+  accents. All in `styles.css` CSS variables. **Font sizes in `pt`**, never px/em/rem.
+- **reveal 6.0.1** from CDN. Plugins: **Notes only**. `slideNumber: 'c/t'`, fixed
+  `width: 1280, height: 720`. No chart library; diagrams are `.node`/`.flow-arrow`
+  HTML+CSS. Reusable components in `styles.css`: `.card`, `.callout`, `.tag`, `.stat`,
+  `.node`, `.kicker`, `.shot`.
+- **Build stamp:** fixed top-right element `id="buildstamp"` reads `dev` locally;
+  `deploy.yml` rewrites it to `<short-sha> · <date>` at publish time. Keep the `id` and
+  the `dev` default so the sed anchor keeps working.
+- Node deps for the skill scripts live in `.agents/skills/revealjs/node_modules`
+  (gitignored); run `npm install` there if the overflow checker can't find puppeteer,
+  then `npx puppeteer browsers install chrome` once.
+
+## Sources (what feeds the slides)
+
+- `mcp-design-talk.md` — committed research dossier: per-project analysis, cross-project
+  patterns, ~40 negative lessons with commits, spec comparison, principles, checklist.
+- `research/` — **gitignored** intermediate reports (one per repo + synthesis + spec
+  baseline + live-gateway snapshot). Regenerate rather than commit.
+- The analyzed repos live locally under `~` (rucio-mcp, ami-mcp, af-jupyterlab-mcp,
+  af-filesystem-mcp, atlas-search-mcp-bridge, af-credentials, {krb5,voms,condor}-token-service,
+  af-mcp-platform, flux_apps) — link, don't commit. Known defects found during the
+  research are filed as issues on the maniaclab repos, not tracked here.
 
 ## Commits & deploy
 
 - Commit/push to **`main`** (no feature branches needed). Conventional Commits.
 - End commit messages with `Assisted-by: Claude (Anthropic)` (Giordon's convention — not
   Co-Authored-By).
-- Pushing `main` auto-deploys via `.github/workflows/deploy.yml`. Verify the run is green and
-  the live site updated. Pages source: **Settings → Pages → GitHub Actions** (one-time).
-
-## Source material (LOCAL ONLY — gitignored on purpose)
-
-These inputs live in the working tree but are **not committed**, and must stay that way —
-this repo is public and they carry internal detail (collaborators, Slack/email threads, ops
-internals) beyond what's on the slides:
-
-- `nikhef_colloquium_research.md` — the vetted research dossier the deck's notes point to.
-- `nikhef_colloquium_title_abstract.md` — title/abstract drafts.
-- `af-agentic-ai-research.md` — earlier Slack/email research.
-- `talk-notes.md`, `TODO.md` — Giordon's personal notes.
-- PDFs (`*.pdf`) and checked-out repos (`marketplace/`, `rucio-mcp/`, `ami-mcp/`,
-  `jupyter-mcp-server/`, `af-docs/`, `flux_apps/`) — link, don't commit.
-
-## Getting Slack/email-sourced facts
-
-For anything that lives only in Giordon's Slack or email (real outputs, adoption numbers,
-quotes), don't fabricate — hand Giordon a copy-paste prompt to run in **Claude App** (which has
-those connectors) and fold the result back in. The dossier was produced that way.
+- Pushing `main` auto-deploys via `.github/workflows/deploy.yml`. Verify the run is green
+  and the live site updated. Pages source: **Settings → Pages → GitHub Actions** (one-time).
