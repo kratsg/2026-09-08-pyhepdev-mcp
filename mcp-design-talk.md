@@ -211,10 +211,6 @@ Captured through the deployed gateway's own tools (`af_whoami`, `af_list_mcp_ser
   1–72 h), motivated in-repo by the incumbent portal enforcing its 72 h cap in HTML only
   (`CLAUDE.md:142-151`). Error design is security design: `NotFoundOrNotYoursError`
   deliberately conflates 404/403 to block name enumeration (`k8s/errors.py:26-31`).
-- **Live bug class (Observation):** `create_jupyter_server`'s docstring still tells the
-  model to call the deleted `include_url=True` (`jupyterlab.py:63`) — description drift,
-  with nothing linting prose against schema.
-
 ### 4.4 af-filesystem-mcp — the kernel is the boundary
 
 - **Scope (Observation):** four read-only verbs over the caller's own `/home/<user>` and
@@ -236,10 +232,6 @@ Captured through the deployed gateway's own tools (`af_whoami`, `af_list_mcp_ser
 - **Three-audience errors (Observation):** machine tags (`PATH_ESCAPE`, `NOT_FOUND`) at the
   subprocess boundary → LLM-friendly prefixes → recovery hints and "Next actions" bullets
   (`tools/_helpers.py:37-162`).
-- **Found defects (Observation):** `fs_grep` documents limits it never clamps; `tail` mode
-  on a >1 MiB file returns the tail of the first MiB only (`ops.py:252`) — prose/enforcement
-  gaps are the same bug class as description drift.
-
 ### 4.5 atlas-search-mcp-bridge — the protocol adapter
 
 - **Why it exists (Observation):** the incompatibility is purely *authentication*, not
@@ -382,7 +374,7 @@ times; the contract never moved).
 4. **Bounded outputs with in-band truncation markers and continuation instructions.**
    Field allowlists, lazy pagination end-to-end, weight-tuned default limits, `truncated` +
    recovery instruction. Negative proofs: rucio's pagination theater (`24f7497`); AMI's raw
-   14-column tables (`901f339`); the one leg that drifts is enforcement (FS grep clamp gap).
+   14-column tables (`901f339`). Of the three legs, enforcement is the one to test.
 5. **Stateless HTTP; state behind stable handles.** FS (`149b63d`) and JLab (`92ff9cc`)
    hit the identical multi-replica session-404 failure within a day and fixed it
    identically; rucio's session-keyed cache bug (`9d7022a`) is the security variant. The
@@ -409,7 +401,7 @@ times; the contract never moved).
     including Helm/CI); the discipline that saves it is documented deltas ("unlike ami-mcp,
     broker-only"; FS hard-exits refusing shared-secret mode with the reason,
     `server.py:171-177`). Drift caught in the act: dead copied ImportError guards
-    (`a8cf8bc`), stale docstrings (condor `ratelimit.py:3-5`, voms `minting.py:147`).
+    (`a8cf8bc`).
 
 Two one-liners: readiness probes check own dependencies, never the upstream ("a CERN-side
 outage must not flap this pod's readiness" — bridge, krb5, condor); log-redaction
@@ -492,9 +484,9 @@ arguably right), and it's telling that broker mode replaced it with redemption.
    AMI's entire second development burst added zero tools.
 2. **The tool list is a function of the trust model** — it varies per auth mode, per
    transport, per linked identity, per backend health. The spec treats it as static.
-3. **Descriptions are executable and rot like code** — doc bugs are behavior bugs (AMI),
-   drift is a live bug class (JLab), prose/enforcement gaps count too (FS). No linter
-   exists for prose-to-schema consistency.
+3. **Descriptions are executable and rot like code** — doc bugs are behavior bugs (AMI's
+   four same-day docstring fixes against the live service). No linter exists for
+   prose-to-schema consistency.
 4. **Empty results need routing too** — "No dataset replicas found" + "if it's a container,
    use X" turned the most common silent failure into a self-healing step.
 5. **Green CI proves nothing about credential plumbing** — the hard bugs live in DNS, CA
@@ -560,7 +552,6 @@ Interface/tool design:
 2. One replica tool → split by DID type with bidirectional redirects (`9f4caed`).
 3. Raw AMI rows → allowlists/pivots/dedup (`901f339`).
 4. DSL docs from memory → four same-day doc-bug fixes against live AMI (`74e9063` et al.).
-5. Description drift ships (JLab `include_url`, FS clamp gap, condor/voms stale docstrings).
 
 Statefulness/scaling:
 6. SDK-default stateful HTTP × 2 replicas → cross-replica 404s → `stateless_http=True`
@@ -842,8 +833,7 @@ The seven principles, each evidence-backed across multiple projects:
 *One-sentence rule:* a tool definition is an API for a probabilistic programmer, so
 descriptions, outputs, and errors are the interface — and they rot like code.
 *Evidence:* arcade-convention import (`f1508e7`); AMI's four same-day doc-bug fixes;
-JLab's description drift; tool split by DID type (`9f4caed`); soft validation
-(`hashtags.py:131-138`).
+tool split by DID type (`9f4caed`); soft validation (`hashtags.py:131-138`).
 *Snippet:* `rucio-mcp/src/rucio_mcp/tools/_helpers.py:116-212`.
 
 ### P2 — Errors are the agent's control flow
