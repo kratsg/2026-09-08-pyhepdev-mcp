@@ -353,39 +353,44 @@ wildcard pattern to search for it.</code></pre>
 <section id="p-context">
   <h2>Context is a bounded resource</h2>
   <div class="content" style="gap:16px;">
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:22px;">
-      <div class="card">
-        <h3><i class="fa-solid fa-masks-theater card-icon" style="font-size:16pt;"></i> Pagination storm</h3>
-        <p style="font-size:14pt;">Five tools returned a tidy 100-row page while <strong>downloading everything upstream first</strong>: one 500k-file container, fetched to serve a single page.</p>
-        <p style="font-size:14pt; margin-top:6px;">Paginate the upstream iterator too, not just the output.</p>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:22px; align-items:start;">
+      <div>
+        <p style="margin:0 0 6px 0;"><span class="tag">bad: <code>rucio_list_files("mc23...")</code>, unbounded</span></p>
+        <pre style="margin:0;"><code class="block" style="font-size:12pt; border-left-color:#a33;">mc23_13p6TeV:file_000001.root
+mc23_13p6TeV:file_000002.root
+mc23_13p6TeV:file_000003.root
+... 499,997 more lines ...</code></pre>
+        <p class="text-muted" style="font-size:11.5pt; margin:4px 0 0 0;">one call floods the LLM's entire context window, and the server downloaded all 500k names to do it</p>
       </div>
-      <div class="card teal">
-        <h3><i class="fa-solid fa-ruler-combined card-icon" style="font-size:16pt;"></i> Every limit, three parts</h3>
-        <ul>
-          <li><strong>Enforced</strong> server-side: <code>fs_read</code> &le; 1&nbsp;MiB, <code>fs_grep</code> &le; 200 matches</li>
-          <li><strong>Announced</strong> in the output: <code>Showing 50 results. Pass `offset=50` to see more.</code></li>
-          <li><strong>Recoverable</strong>: "narrow <code>path</code> and retry"</li>
-        </ul>
+      <div>
+        <p style="margin:0 0 6px 0;"><span class="tag teal">good: capped, and the output says so</span></p>
+        <pre style="margin:0;"><code class="block" style="font-size:12pt; border-left-color:var(--teal);">mc23_13p6TeV:file_000001.root
+... 49 more ...
+
+---
+Showing 50 results (offset=0).
+Pass `offset=50` to see more.</code></pre>
+        <p class="text-muted" style="font-size:11.5pt; margin:4px 0 0 0;">a hard server-side limit, announced in the output, with the way to continue spelled out</p>
       </div>
     </div>
     <div class="callout">
-      <p class="label">At the platform layer</p>
-      <p style="margin:0;">The gateway curates too: it writes its own short instructions instead of forwarding every server's, and only lists the tools you're allowed to call.</p>
+      <p style="margin:0;">And cap the <strong>server's</strong> work too: rucio-mcp once fetched that whole 500k-file container upstream just to serve one 50-row page. Paginate the upstream iterator, not just the output.</p>
     </div>
   </div>
+  <div class="footnote">The real footer text and iterator fix: <a href="https://github.com/kratsg/rucio-mcp/blob/main/src/rucio_mcp/tools/_helpers.py">rucio-mcp <code>tools/_helpers.py</code></a> (<code>paginate_iter</code>).</div>
   <aside class="notes">
-    Treat the context window as a metered resource, the way you treat memory. The war story: five
-    of our tools looked perfectly paginated from the model's side while downloading everything
-    upstream first; a half-million-file container got fetched to serve one page. Paginate the
-    upstream iterator too, or the pagination only protects the model and not the server.
-    The rule I'd put on a poster: every limit has three parts. It's enforced server side, with a
-    concrete number, like one megabyte per read and two hundred grep matches. It announces itself
-    in the output, like the pagination footer on the slide, so truncation never silently distorts
-    what the model believes. And it comes with a recovery move: narrow the path and retry, rather
-    than asking for a bigger limit.
-    And the same principle recurses at the platform: the gateway writes its own short
-    instructions instead of forwarding every backend's, and only lists tools you're actually
-    allowed to call.
+    Same bad-versus-good format. Left: what a naive file-listing tool does with a big container:
+    half a million lines into the LLM's context window, which destroys the conversation, and the
+    server fetched all of it from Rucio to boot. Right: what rucio-mcp actually returns. A hard
+    limit of fifty, enforced server side, and the two lines at the bottom matter most: the output
+    says it truncated and says exactly how to get the next page. Truncation the LLM can't see
+    silently distorts what it believes; truncation it can see is just the next tool call.
+    The callout is the second half of the lesson, and we learned it the embarrassing way: for a
+    while the output was perfectly paginated while the server still downloaded the entire
+    container upstream to serve each page. An external contributor caught it. Cap what the
+    backend does, not just what the LLM reads.
+    Same principle at the gateway: it writes its own short instructions instead of forwarding
+    every server's, and only lists the tools you're allowed to call.
   </aside>
 </section>
 
@@ -415,7 +420,7 @@ async def create_jupyter_server(
         <ul style="margin-top:6px;">
           <li><strong>No tool takes a username.</strong> The schema cannot express "read bob's files"</li>
           <li><strong>One rule, different ways to implement, e.g.:</strong> k8s owner labels &middot; kernel uid/gid &middot; the VOMS nickname in your proxy</li>
-          <li><strong>Who you are comes from the identity provider (Keycloak) on every call</strong>, not from what a token claims</li>
+          <li><strong>Who you are comes from the identity provider (e.g. Keycloak) on every call</strong>, not from what a token claims</li>
         </ul>
         <div class="callout" style="margin-top:10px;">
           <p class="label">The principle</p>
@@ -460,27 +465,45 @@ async def create_jupyter_server(
         <p style="font-size:13.5pt;">e.g. only <code>condor-token-service</code> touches the Condor pool key; the broker is its only allowed caller, and it returns short-lived IDTokens.</p>
       </div>
     </div>
-    <blockquote style="font-size:17pt; margin:8px 0;">"Authorization model: none beyond identity, by design. &hellip; Do not add capability logic here based on token claims."
-      <cite>the same module docstring in all three token services (<a href="https://github.com/maniaclab/krb5-token-service/blob/main/src/krb5_token_service/app.py">krb5 <code>app.py</code></a>); permissions are decided once, at the gateway</cite>
-    </blockquote>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:22px; align-items:start;">
+      <div>
+        <p style="margin:0 0 6px 0;"><span class="tag">bad: a token service deciding permissions</span></p>
+        <pre style="margin:0;"><code class="block" style="font-size:12pt; border-left-color:#a33;"><span class="kw">if</span> <span class="cmt">"atlas-users"</span> <span class="kw">in</span> token[<span class="cmt">"groups"</span>]:
+    mint_ticket(user)
+<span class="cmt"># a second copy of the access rules,
+# trusting whatever the token claims</span></code></pre>
+      </div>
+      <div>
+        <p style="margin:0 0 6px 0;"><span class="tag teal">good: it only verifies who is calling</span></p>
+        <pre style="margin:0;"><code class="block" style="font-size:12pt; border-left-color:var(--teal);">claims = verify(token, aud=<span class="cmt">"krb5-token-service"</span>)
+mint_ticket(claims[<span class="cmt">"sub"</span>])
+<span class="cmt"># the gateway already decided permissions;
+# this token proves who, from the broker</span></code></pre>
+        <p class="text-muted" style="font-size:11.5pt; margin:4px 0 0 0;">sketch; written into all three token services' docstrings (<a href="https://github.com/maniaclab/krb5-token-service/blob/main/src/krb5_token_service/app.py">krb5 <code>app.py</code></a>)</p>
+      </div>
+    </div>
     <div class="callout teal">
       <p style="margin:0;">Never store secrets in the MCP server. Keep them in a vault (OpenBao, here) behind the broker, and mint short-lived credentials per call.</p>
     </div>
   </div>
   <aside class="notes">
     The architectural heart, and the abstract's promise: authentication without exposing user
-    credentials. Three moves. First, credential lifetime equals tool-call lifetime: when rucio-mcp
-    needs your grid proxy, it fetches it, writes a mode-0600 temp file, makes exactly one backend
-    call, and deletes it, success or failure. We test the deletion, not just the fetch.
+    credentials. Three moves across the cards. First, credential lifetime equals tool-call
+    lifetime: when rucio-mcp needs your grid proxy, it fetches it, writes a mode-0600 temp file,
+    makes exactly one backend call, and deletes it, success or failure. We test the deletion.
     Second, exchange instead of forwarding: the user's own token never goes downstream, which the
-    MCP spec explicitly forbids. What goes downstream instead is a fresh JWT the broker mints,
-    valid for exactly one service and expiring in ten minutes. Heavy material like proxy files
-    never passes through the gateway at all; the backend fetches it directly from the broker.
-    Third, the root secrets. The Condor pool key can mint a token for any identity, so exactly
-    one tiny service touches it, the broker is the only thing allowed to call that service, and
-    its docstring literally forbids adding permission logic there. Permissions are decided once,
-    at the gateway. Everything secret lives in a vault, OpenBao for us, never in an MCP server.
-    Deep-dive below if credential plumbing is your thing.
+    MCP spec explicitly forbids. What goes downstream is a fresh JWT the broker mints, valid for
+    exactly one service and expiring in ten minutes. Heavy material like proxy files never passes
+    through the gateway at all; the backend fetches it directly from the broker.
+    The bad-versus-good pair is about where permission decisions live. Bad: the token service
+    checks the token's groups itself. Now the access rules exist in two places, and this copy
+    trusts whatever the token happens to claim, so a stale token keeps its access. Good: the
+    service verifies only that this is a valid broker token addressed to it, and mints for
+    whoever the token says. The permission check already happened once, at the gateway, against
+    live Keycloak groups. That rule is written into all three token services' docstrings so
+    nobody re-grows a second permission layer.
+    And nothing secret lives in an MCP server: it's all in a vault, OpenBao for us, behind the
+    broker. Deep-dive below if credential plumbing is your thing.
   </aside>
 </section>
 
