@@ -47,9 +47,9 @@ slide). The per-repo research reports live in `research/` (**local only, gitigno
   abridged only (label "abridged"/"sketch" when reformatted).
 - **Vertical stacks (down-arrow within a stack, right-arrow between):**
   `what-is-mcp(+build)`, `p-credentials(+custodians)`, `platform-scale(+lessons)`,
-  `interop(+spec)`, `close(+checklist)`. Backups are marked in HTML banner comments
-  (never put a literal `<!-- ... -->` inside another comment — it closes the outer one
-  and leaks text onto every slide). Keep that structure if adding slides.
+  `trace(+steps)`, `interop(+spec)`, `close(+checklist)`. Backups are marked in HTML
+  banner comments (never put a literal `<!-- ... -->` inside another comment — it closes
+  the outer one and leaks text onto every slide). Keep that structure if adding slides.
 - **Em-dash policy (humanized):** prose uses commas/colons/periods. Em-dashes only in
   real quotations and "Name — role" lists.
 - **Speaker notes:** every slide has an `<aside class="notes">`, conversational, first
@@ -63,6 +63,13 @@ slide). The per-repo research reports live in `research/` (**local only, gitigno
   `width: 1280, height: 720`. No chart library; diagrams are `.node`/`.flow-arrow`
   HTML+CSS. Reusable components in `styles.css`: `.card`, `.callout`, `.tag`, `.stat`,
   `.node`, `.kicker`, `.shot`.
+- **The trace slide's animated gateway diagram** (`.pdiag` CSS + the GSAP "gateway
+  pulse" script at the bottom of `presentation.html`) is the mcp-portal landing
+  animation, ported via R. Gardner's WLCG OTF12 deck (robrwg/2026-08-25-WLCG-OTF12; the
+  original is af-mcp-platform `portal/src/lib/gatewayPulse.ts`). It plays only while
+  the slide is on screen, is skipped under `?export` (decktape shows the static
+  diagram, correctly) and under prefers-reduced-motion, and needs the GSAP CDN script
+  tag that precedes reveal.js.
 - **Build stamp:** fixed top-right element `id="buildstamp"` reads `dev` locally;
   `deploy.yml` rewrites it to `<short-sha> · <date>` at publish time. Keep the `id` and
   the `dev` default so the sed anchor keeps working.

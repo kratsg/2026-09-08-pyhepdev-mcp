@@ -520,3 +520,184 @@
   color: var(--muted-color);
   margin-top: 20px;
 }
+
+/* ===========================================
+   GATEWAY PULSE DIAGRAM (trace slide)
+   Ported from the mcp-portal.af.uchicago.edu landing animation via
+   R. Gardner's WLCG OTF12 deck (robrwg/2026-08-25-WLCG-OTF12), which
+   itself ports af-mcp-platform portal/src/lib/gatewayPulse.ts.
+   =========================================== */
+.pdiag-panel {
+  background: #0a0e1a;
+  border: 1px solid #1f2937;
+  border-radius: 12px;
+  padding: 14px 18px 18px;
+}
+.reveal .pdiag-url {
+  font-family: var(--mono-font);
+  font-size: 8.5pt;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #00d4c8;
+  margin: 0 0 12px;
+}
+.pdiag {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  --af-surface: #111827;
+  --af-border: #1f2937;
+  --af-dim: #9ca3af;
+  --af-label: #838d99;
+  --af-text: #e8ecf0;
+  --af-teal: #00d4c8;
+  --af-red: #ef4444;
+  --af-green: #10b981;
+}
+.pdiag .d-node {
+  font-family: var(--mono-font);
+  font-size: 10.5pt;
+  color: var(--af-text);
+  background: var(--af-surface);
+  border: 1px solid var(--af-border);
+  border-radius: 4px;
+  padding: 8px 22px;
+  transition: border-color 200ms, box-shadow 200ms;
+}
+.pdiag .is-pulse-active {
+  border-color: var(--af-teal) !important;
+  box-shadow: 0 0 16px 2px rgba(0, 212, 200, 0.3);
+}
+.pdiag .is-pulse-denied {
+  border-color: var(--af-red) !important;
+  box-shadow: 0 0 16px 2px rgba(239, 68, 68, 0.3);
+  animation: pdiag-denied-buzz 160ms ease-in-out 3;
+}
+@keyframes pdiag-denied-buzz {
+  0%, 100% { box-shadow: 0 0 16px 2px rgba(239, 68, 68, 0.3); }
+  50% { box-shadow: 0 0 24px 4px rgba(239, 68, 68, 0.65); }
+}
+.pdiag .d-client { display: inline-flex; align-items: center; gap: 6px; color: var(--af-dim); }
+.pdiag .d-gateway {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 26px;
+  border-color: var(--af-teal);
+}
+.pdiag .d-gwname { font-weight: 700; font-size: 11.5pt; letter-spacing: 0.02em; color: var(--af-text); }
+.pdiag .d-tags { display: flex; gap: 7px; }
+.pdiag .d-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--mono-font);
+  font-size: 7.5pt;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--af-label);
+  border: 1px solid var(--af-border);
+  border-radius: 2px;
+  padding: 2.5px 7px;
+}
+.pdiag .d-icon { position: relative; display: inline-block; width: 11px; height: 11px; flex-shrink: 0; }
+.pdiag .d-spin, .pdiag .d-check, .pdiag .d-x {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 150ms;
+}
+.pdiag .d-spin { border: 1.5px solid var(--af-border); border-top-color: var(--af-teal); border-radius: 50%; }
+.pdiag .d-check { color: var(--af-green); }
+.pdiag .d-x { color: var(--af-red); }
+.pdiag [data-state='checking'] .d-spin { opacity: 1; animation: pdiag-spin 550ms linear infinite; }
+.pdiag [data-state='ok'] .d-check { opacity: 1; }
+.pdiag [data-state='fail'] .d-x { opacity: 1; }
+@keyframes pdiag-spin { to { transform: rotate(360deg); } }
+.pdiag .d-link { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 5px 0; }
+.pdiag .d-link::before, .pdiag .d-link::after { content: ''; width: 1px; height: 11px; background: var(--af-border); }
+.pdiag .d-linklabel {
+  font-family: var(--mono-font);
+  font-size: 7.5pt;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--af-teal);
+}
+.pdiag .d-stem { width: 1px; height: 18px; background: var(--af-border); }
+.pdiag .d-fanout {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  width: 100%;
+  padding-top: 18px;
+  border-top: 1px solid var(--af-border);
+}
+.pdiag .d-branch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono-font);
+  font-size: 9.5pt;
+  color: var(--af-text);
+  background: var(--af-surface);
+  border: 1px solid var(--af-border);
+  border-radius: 4px;
+  padding: 7px 14px;
+  transition: border-color 200ms, box-shadow 200ms;
+}
+.pdiag .d-branch::before {
+  content: '';
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  width: 1px;
+  height: 18px;
+  background: var(--af-border);
+}
+.pdiag .d-pulse {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  margin: -4px;
+  border-radius: 50%;
+  background: var(--af-teal);
+  box-shadow: 0 0 10px 2px rgba(0, 212, 200, 0.7);
+  opacity: 0;
+  pointer-events: none;
+}
+.pdiag .d-cred { position: absolute; top: 0; left: 0; font-size: 8.5pt; padding: 6px 11px; opacity: 0; pointer-events: none; }
+.pdiag .d-chat {
+  position: absolute;
+  top: 0;
+  right: -4px;
+  display: flex;
+  flex-direction: column;
+  width: 210px;
+  pointer-events: none;
+}
+.pdiag .d-chatline {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  font-family: var(--mono-font);
+  font-size: 8pt;
+  padding: 0 7px;
+  border-left: 1px solid var(--af-border);
+}
+.pdiag .d-chatrole { flex-shrink: 0; color: var(--af-teal); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+.pdiag .d-chattext { color: var(--af-dim); }
+@media (prefers-reduced-motion: reduce) {
+  .pdiag [data-state='checking'] .d-spin, .pdiag .is-pulse-denied { animation: none; }
+}
