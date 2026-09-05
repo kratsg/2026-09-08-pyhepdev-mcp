@@ -248,6 +248,21 @@ mcp.run()</code></pre>
 </section>
 
 <!-- ============================================================ -->
+<!-- DIVIDER 01: LESSONS LEARNED                                  -->
+<!-- ============================================================ -->
+<section id="divider-lessons" class="section-divider" data-state="is-section-divider">
+  <p class="section-num">01</p>
+  <p class="kicker">six servers later</p>
+  <h1>Lessons learned</h1>
+  <p style="font-size:16pt; margin-top:16px;">interfaces &middot; errors &middot; context &middot; identity &middot; credentials &middot; the facility</p>
+  <aside class="notes">
+    Ten seconds, just the turn: that was what exists; the rest of the talk is what building it
+    taught me. Six lessons, roughly one slide each: the interface, errors, context, identity,
+    credentials, and the facility environment itself.
+  </aside>
+</section>
+
+<!-- ============================================================ -->
 <!-- 5. AN EXISTING API IS NOT AN AGENT INTERFACE                                          -->
 <!-- ============================================================ -->
 <section id="interface-problem">
@@ -591,6 +606,21 @@ mint_ticket(claims[<span class="cmt">"sub"</span>])
     policy silently blocking the KDC, on reverse DNS, and on a dropped header. Never the code.
     Mocked unit tests cannot see any of that, so budget real time for testing against the live
     facility services.
+  </aside>
+</section>
+
+<!-- ============================================================ -->
+<!-- DIVIDER 02: FROM SERVERS TO A PLATFORM                       -->
+<!-- ============================================================ -->
+<section id="divider-platform" class="section-divider" data-state="is-section-divider">
+  <p class="section-num">02</p>
+  <p class="kicker">many MCPs, one endpoint</p>
+  <h1>From servers to a platform</h1>
+  <p style="font-size:16pt; margin-top:16px;">what breaks at ten MCPs &middot; one tool call, end to end</p>
+  <aside class="notes">
+    The second turn: everything so far was one server at a time. Hosting many of them for
+    nine hundred users is a different problem, and that's the gateway and broker. Two slides:
+    what breaks at ten MCPs, and one real tool call traced end to end.
   </aside>
 </section>
 
