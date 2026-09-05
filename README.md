@@ -1,10 +1,11 @@
 # Model Context Protocol for Scientific Software
 
-Slides for **PyHEP.dev 2026** (8 September 2026) by Giordon Stark (University of Chicago):
+Slides for **PyHEP.dev 2026** (7 September 2026) by Giordon Stark (University of Chicago):
 *"Model Context Protocol for Scientific Software: Building AI Interfaces That Actually
 Work."* Title and abstract: [`title-abstract.md`](title-abstract.md).
 
 **▶ View the deck:** https://kratsg.github.io/2026-09-08-pyhepdev-mcp/
+**▶ Conference page:** https://indico.nikhef.nl/event/7873/contributions/31381/
 
 A 15-minute introduction to MCP for scientific software developers, argued from a working
 deployment: six MCP-layer projects, four credential services, and one gateway/broker

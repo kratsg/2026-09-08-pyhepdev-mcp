@@ -1,8 +1,9 @@
 # CLAUDE.md — working on this repo
 
 This repo is a **reveal.js talk**: "Model Context Protocol for Scientific Software:
-Building AI Interfaces That Actually Work" (PyHEP.dev 2026, 2026-09-08, Giordon Stark,
+Building AI Interfaces That Actually Work" (PyHEP.dev 2026, 2026-09-07, Giordon Stark,
 University of Chicago). 15 minutes. It is **public** and auto-deploys to GitHub Pages.
+Conference page: https://indico.nikhef.nl/event/7873/contributions/31381/
 Read `README.md` for the audience-facing overview and `title-abstract.md` for the
 submitted title/abstract; this file is for whoever edits it next.
 

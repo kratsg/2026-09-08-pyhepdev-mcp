@@ -1,6 +1,9 @@
 # Model Context Protocol for Scientific Software: Building AI Interfaces That Actually Work
 
-*PyHEP.dev 2026 · 2026-09-08 · Giordon Stark (University of Chicago) · 15 minutes*
+*PyHEP.dev 2026 · 2026-09-07, 13:30 (Veltman Centre, Nikhef) · Giordon Stark (University of
+Chicago) · 15 minutes*
+
+Conference page: <https://indico.nikhef.nl/event/7873/contributions/31381/>
 
 Large language models are rapidly becoming useful assistants for software development,
 analysis, and documentation. In practice, however, the limiting factor is rarely the model
