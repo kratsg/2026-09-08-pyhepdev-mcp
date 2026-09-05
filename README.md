@@ -1,6 +1,6 @@
 # Model Context Protocol for Scientific Software
 
-Slides for **PyHEP.dev 2026** (8 September 2026) by Giordon Stark (UC Santa Cruz / SCIPP):
+Slides for **PyHEP.dev 2026** (8 September 2026) by Giordon Stark (University of Chicago):
 *"Model Context Protocol for Scientific Software: Building AI Interfaces That Actually
 Work."* Title and abstract: [`title-abstract.md`](title-abstract.md).
 
